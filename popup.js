@@ -49,7 +49,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // ========= 변수 ========= //
 // testnet 주소 -> alchemy / app / polygon mumbai / api / HTTPS
-let providerURL = 'https://polygon-mumbai.g.alchemy.com/v2/LSwn5rwZ1-AJKZpl6GpHBUJhVT6EIp_S';
+// let providerURL = 'https://polygon-mumbai.g.alchemy.com/v2/LSwn5rwZ1-AJKZpl6GpHBUJhVT6EIp_S';
+let providerURL = 'https://rpc.ankr.com/polygon_mumbai';
 
 // let provider;
 let privateKey;
@@ -69,6 +70,7 @@ function handler() {
     // provider
     const provider = new ethers.providers.JsonRpcProvider(providerURL);
 
+    // Wallet 이 class 인듯
     let wallet = new ehters.Wallet(privateKey, provider);
 
     const tx = {
@@ -110,7 +112,7 @@ function getOpenNetwork() {
     document.getElementById("network").style.display = "block";
 };
 
-// 네트워크 선택 -> provider url 변경
+// 네트워크 선택 -> provider url (rpc 주소) 변경
 function getSelectedNetwork(event) {
     const element = document.getElementById("selected_network");
     element.innerHTML = event.target.innerHTML;
@@ -226,16 +228,50 @@ function signUp() {
     }
 };
 
+// 로그인
 function login() {
+    document.getElementById("login_form").style.display = 'none';
+    document.getElementById("center").style.display = 'block';
 
+    const email = document.getElementById("login_email").value;
+    const password = document.getElementById("login_password").value;
+
+    // API CALL
+    const url = 'http://localhost:3000/api/v1/user/login'
+    const data = {
+        email: email,
+        password: password,
+    };
+
+    fetch(url, {
+        method: 'POST',
+        handler: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    }).then((response) => response.json()).then((result) => {
+        console.log(result);
+        const userWallet = {
+            address: result.data.user.address,
+            private_key: result.data.user.private_key,
+            mnemonic: result.data.user.mnemonic,
+        };
+
+        const jsonObj = JSON.stringify(userWallet);
+        localStorage.setItem('userWallet', jsonObj);
+        window.location.reload();
+    }).catch((error) => console.log("ERROR: ", error));
 };
 
+// 로그아웃
 function logout() {
+    localStorage.removeItem("userWallet");
+    window.location.reload();
 
 };
 
 function openTransfer() {
-
+    
 };
 
 function goBack() {

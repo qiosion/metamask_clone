@@ -1,13 +1,14 @@
 var commonjsGlobal =
-  typeof globalThis !== "undefined"
-    ? globalThis
-    : typeof window !== "undefined"
-    ? window
-    : typeof global !== "undefined"
-    ? global
-    : typeof self !== "undefined"
-    ? self
-    : {};
+  typeof globalThis !== "undefined" ? globalThis
+  : typeof window !== "undefined" ? window
+  : typeof global !== "undefined" ? global
+  : typeof self !== "undefined" ? self
+  : {};
+// globalThis : 어떤 환경이든 무관하게 전역 this 사용 가능
+// 웹 : window, self
+// nodejs : global
+// web workers : self
+
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default")
     ? x["default"]
