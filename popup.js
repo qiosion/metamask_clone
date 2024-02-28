@@ -374,16 +374,80 @@ function addAccount() {
     });
 };
 
-// reload all data
+// reload all data : 확장프로그램 실행 시 필요한 정보 불러오기
 function myFunction() {
+    const str = localStorage.getItem("userWallet");
+    const parseObj = JSON.parse(str);
 
+    if (parseObj.address) {
+        document.getElementById("LoginUser").style.display = "none";
+        document.getElementById("home").style.display = "block";
+
+        privateKey = parseObj.private_key;
+        address = parseObj.address;
+
+        checkBalance(parseObj.address);
+
+    };
+
+    const tokenRender = document.querySelector(".assets");
+    const accountRender = document.querySelector(".accountList");
+
+    // 토큰 정보 불러오기
+    const url_alltoken = "http://localhost:3000/api/v1/tokens/alltoken";
+    
+    fetch(url_alltoken).then((response) => response.json()).then((data) => {
+        let elements = "";
+
+        data.data.tokens.map((token) => {
+            elements += `
+                <div class="assets_item">
+                    <img class="assets_item_img" src="./assets/theblockchaincoders.png" alt="" />
+                    <span>${token.address.slice(0,15)}...</span>
+                    <span>${token.symbol}</span>
+                </div>
+            `
+        });
+
+        tokenRender.innerHTML = elements;
+    }).catch((error) => {
+        console.log("ERROR: ", error);
+    });
+
+    // 계정 정보 불러오기
+    const url_allacount = "http://localhost:3000/api/v1/account/allacount";
+    
+    fetch(url_allacount).then((response) => response.json()).then((data) => {
+        let accounts = "";
+
+        data.data.accounts.map((account, i) => {
+            accounts += `
+                <div class="lists">
+                    <p>${i + 1}</p>
+                    <p class="accountValue"
+                        data-address="${account.address}"
+                        data-privateKey="${account.privateKey}">
+                        ${account.address.slice(0, 25)}...
+                    </p>
+                    <p></p>
+                </div>
+            `
+        });
+
+        accountRender.innerHTML = accounts;
+    }).catch((error) => {
+        console.log("ERROR: ", error);
+    });
+
+    console.log("privateKey : ", privateKey);
 };
 
 function copyAddress() {
-
+    navigator.clipboard.writeText(address);
 };
 
 function changeAccount() {
 
 };
 
+window.onload = myFunction;
