@@ -271,47 +271,107 @@ function logout() {
 };
 
 function openTransfer() {
-    
+    document.getElementById("transfer_from").style.display = "block";
+    document.getElementById("home").style.display = "none";
 };
 
 function goBack() {
-
+    document.getElementById("transfer_from").style.display = "none";
+    document.getElementById("home").style.display = "block";
 };
 
 function openImport() {
-
+    document.getElementById("import_token").style.display = "block";
+    document.getElementById("home").style.display = "none";
 };
 
 function ImportGoBack() {
-
+    document.getElementById("import_token").style.display = "none";
+    document.getElementById("home").style.display = "block";
 };
 
 function openActivity() {
-
+    document.getElementById("activity").style.display = "block";
+    document.getElementById("assets").style.display = "none";
 }
 
 function openAssets() {
-
+    document.getElementById("activity").style.display = "none";
+    document.getElementById("assets").style.display = "block";
 };
 
 function goHomePage() {
-
+    document.getElementById("create_popUp").style.display = "none";
+    document.getElementById("home").style.display = "block";
 };
 
 function openImportModel() {
-
+    document.getElementById("import_account").style.display = "block";
+    document.getElementById("home").style.display = "none";
 };
 
 function closeImportModel() {
-
+    document.getElementById("import_account").style.display = "none";
+    document.getElementById("home").style.display = "block";
 };
 
+// 토큰 추가
 function addToken() {
+    const name = document.getElementById("token_name").value;
+    const address = document.getElementById("token_address").value;
+    const symbol = document.getElementById("token_symbol").value;
 
+    const url = "http://localhost:3000/api/v1/tokens/createtoken";
+
+    const data = {
+        name: name,
+        address: address,
+        symbol: symbol,
+    };
+
+    fetch(url, {
+        method: "POST",
+        handler: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    }).then((response) => response.json()).then((result) => {
+        console.log(result);
+        window.location.reload();
+    }).catch((error) => {
+        console.log("ERROR: ", error);
+    });
 };
 
+// 계정 추가
 function addAccount() {
+    const privateKey = document.getElementById("add_account_private_key").value;
 
+    const provider = new ethers.providers.JsonRpcProvider(providerURL);
+
+    let wallet = new ehters.Wallet(privateKey, provider);
+
+    console.log(wallet);
+
+    const url = "http://localhost:3000/api/v1/account/createaccount";
+    
+    const data = {
+        privateKey: privateKey,
+        address: wallet.address,
+    };
+
+    fetch(url, {
+        method: "POST",
+        handler: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    }).then((response) => response.json()).then((result) => {
+        console.log(result);
+        window.location.reload();
+    }).catch((error) => {
+        console.log("ERROR: ", error);
+    });
 };
 
 // reload all data
